@@ -38,6 +38,7 @@ export class AuthController {
   @Get('status')
   @UseGuards(JwtAuthGuard)
   async status(@Req() req: Request, @Res() res: Response) {
+    console.log('obj');
     res.send(req.user);
   }
 
@@ -49,6 +50,7 @@ export class AuthController {
 
   @Post('refresh-token')
   refreshToken(@Body('refreshToken') refreshToken: string) {
+    console.log('object');
     return this.authService.refreshToken(refreshToken);
   }
 }

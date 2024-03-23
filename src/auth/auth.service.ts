@@ -18,7 +18,6 @@ export class AuthService implements IAuthService {
       { username: userDetails.username },
       { selectAll: true },
     );
-    console.log(user);
     if (!user)
       throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
     const isPasswordValid = await compareHash(
@@ -42,7 +41,7 @@ export class AuthService implements IAuthService {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '30s',
+      expiresIn: 10,
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.REFRESH_TOKEN_SECRET,
@@ -58,8 +57,7 @@ export class AuthService implements IAuthService {
       const user = await this.jwtService.verifyAsync(refreshToken, {
         secret: process.env.REFRESH_TOKEN_SECRET,
       });
-      if (!user)
-        throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
+      if (!user) throw new HttpException('Invalid Token', HttpStatus.FORBIDDEN);
       const payload = {
         username: user.username,
         sub: user.sub,
@@ -70,7 +68,7 @@ export class AuthService implements IAuthService {
       });
       return { accessToken };
     } catch (error) {
-      throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid Token', HttpStatus.FORBIDDEN);
     }
   }
 
