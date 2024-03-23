@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SkipThrottle } from '@nestjs/throttler';
-import { AuthenticatedGuard } from '../auth/utils/Guards';
+import { JwtAuthGuard } from '../auth/utils/Guards';
 import { Routes, Services } from '../utils/constants';
 import { AuthUser } from '../utils/decorators';
 import { User } from '../utils/typeorm';
@@ -18,7 +18,7 @@ import { CreateConversationDto } from './dtos/CreateConversation.dto';
 
 @SkipThrottle()
 @Controller(Routes.CONVERSATIONS)
-@UseGuards(AuthenticatedGuard)
+@UseGuards(JwtAuthGuard)
 export class ConversationsController {
   constructor(
     @Inject(Services.CONVERSATIONS)

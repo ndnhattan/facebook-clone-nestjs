@@ -13,10 +13,10 @@ import { instanceToPlain } from 'class-transformer';
 import { Request, Response } from 'express';
 import { IUserService } from '../users/interfaces/user';
 import { Routes, Services } from '../utils/constants';
-import { AuthenticatedRequest } from '../utils/types';
+import { AuthenticatedRequest, ValidateUserDetails } from '../utils/types';
 import { IAuthService } from './auth';
 import { CreateUserDto } from './dtos/CreateUser.dto';
-import { AuthenticatedGuard, LocalAuthGuard } from './utils/Guards';
+import { JwtAuthGuard } from './utils/Guards';
 
 @Controller(Routes.AUTH)
 export class AuthController {
@@ -30,23 +30,25 @@ export class AuthController {
     return instanceToPlain(await this.userService.createUser(createUserDto));
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
-  login(@Res() res: Response) {
-    return res.send(HttpStatus.OK);
+  login(@Body() userCredentials: ValidateUserDetails) {
+    return this.authService.login(userCredentials);
   }
 
   @Get('status')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(JwtAuthGuard)
   async status(@Req() req: Request, @Res() res: Response) {
     res.send(req.user);
   }
 
   @Post('logout')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(JwtAuthGuard)
   logout(@Req() req: AuthenticatedRequest, @Res() res: Response) {
-    req.logout((err) => {
-      return err ? res.send(400) : res.send(200);
-    });
+    return this.authService.logout(req.user.id);
+  }
+
+  @Post('refresh-token')
+  refreshToken(@Body('refreshToken') refreshToken: string) {
+    return this.authService.refreshToken(refreshToken);
   }
 }

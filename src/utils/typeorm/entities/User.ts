@@ -35,6 +35,9 @@ export class User {
   @Exclude()
   password: string;
 
+  @Column({ nullable: true })
+  refreshToken: string;
+
   @OneToMany(() => Message, (message) => message.author)
   @JoinColumn()
   messages: Message[];

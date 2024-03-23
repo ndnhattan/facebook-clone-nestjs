@@ -68,4 +68,10 @@ export class UserService implements IUserService {
       ])
       .getMany();
   }
+
+  async updateUser(id: number, refreshToken: string) {
+    const user = await this.userRepository.findOne({ id });
+    user.refreshToken = refreshToken;
+    return this.userRepository.save(user);
+  }
 }

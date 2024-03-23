@@ -27,7 +27,7 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env.production';
     AuthModule,
     UsersModule,
     ConfigModule.forRoot({ envFilePath }),
-    PassportModule.register({ session: true }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.MYSQL_DB_HOST,

@@ -13,4 +13,5 @@ export interface IUserService {
   ): Promise<User>;
   saveUser(user: User): Promise<User>;
   searchUsers(query: string): Promise<User[]>;
+  updateUser(id: number, refreshToken: string): Promise<User>;
 }

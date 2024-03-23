@@ -3,14 +3,21 @@ import { UsersModule } from '../users/users.module';
 import { Services } from '../utils/constants';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './utils/LocalStrategy';
+import { JwtStrategy } from './utils/JwtStrategy';
 import { SessionSerializer } from './utils/SessionSerializer';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    UsersModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: 30 },
+    }),
+  ],
   controllers: [AuthController],
   providers: [
-    LocalStrategy,
+    JwtStrategy,
     SessionSerializer,
     {
       provide: Services.AUTH,
