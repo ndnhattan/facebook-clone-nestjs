@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpStatus,
   Inject,
   Post,
   Req,
@@ -17,6 +16,7 @@ import { AuthenticatedRequest, ValidateUserDetails } from '../utils/types';
 import { IAuthService } from './auth';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { JwtAuthGuard } from './utils/Guards';
+import { Public } from './decorators/public.decorator';
 
 @Controller(Routes.AUTH)
 export class AuthController {
@@ -25,32 +25,31 @@ export class AuthController {
     @Inject(Services.USERS) private userService: IUserService,
   ) {}
 
+  @Public()
   @Post('register')
   async registerUser(@Body() createUserDto: CreateUserDto) {
     return instanceToPlain(await this.userService.createUser(createUserDto));
   }
 
+  @Public()
   @Post('login')
   login(@Body() userCredentials: ValidateUserDetails) {
     return this.authService.login(userCredentials);
   }
 
   @Get('status')
-  @UseGuards(JwtAuthGuard)
   async status(@Req() req: Request, @Res() res: Response) {
-    console.log('obj');
     res.send(req.user);
   }
 
   @Post('logout')
-  @UseGuards(JwtAuthGuard)
   logout(@Req() req: AuthenticatedRequest, @Res() res: Response) {
     return this.authService.logout(req.user.id);
   }
 
+  @Public()
   @Post('refresh-token')
   refreshToken(@Body('refreshToken') refreshToken: string) {
-    console.log('object');
     return this.authService.refreshToken(refreshToken);
   }
 }
