@@ -38,14 +38,13 @@ export class AuthService implements IAuthService {
       username: user.username,
       sub: user.id,
     };
-
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET,
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+      expiresIn: parseInt(process.env.ACCESS_TOKEN_EXPIRES_IN),
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.REFRESH_TOKEN_SECRET,
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+      expiresIn: parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN),
     });
     await this.userService.updateUser(user.id, refreshToken);
 

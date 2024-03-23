@@ -1,14 +1,24 @@
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { getRepository } from 'typeorm';
 import { AuthenticatedSocket } from '../utils/interfaces';
-import { Session, User } from '../utils/typeorm';
-import * as cookieParser from 'cookie-parser';
+import { User } from '../utils/typeorm';
 import * as cookie from 'cookie';
 import { plainToInstance } from 'class-transformer';
+import { JwtService } from '@nestjs/jwt';
+import { INestApplicationContext } from '@nestjs/common';
 
 export class WebsocketAdapter extends IoAdapter {
+  private jwtService: JwtService;
+
+  constructor(private app: INestApplicationContext) {
+    super(app);
+    app.resolve<JwtService>(JwtService).then((jwtService) => {
+      this.jwtService = jwtService;
+    });
+  }
+
   createIOServer(port: number, options?: any) {
-    const sessionRepository = getRepository(Session);
+    const userRepository = getRepository(User);
     const server = super.createIOServer(port, options);
     server.use(async (socket: AuthenticatedSocket, next) => {
       console.log('Inside Websocket Adapter');
@@ -22,20 +32,16 @@ export class WebsocketAdapter extends IoAdapter {
         console.log('CHAT_APP_SESSION_ID DOES NOT EXIST');
         return next(new Error('Not Authenticated'));
       }
-      const signedCookie = cookieParser.signedCookie(
-        CHAT_APP_SESSION_ID,
-        process.env.COOKIE_SECRET,
-      );
+      const signedCookie = await this.jwtService.verify(CHAT_APP_SESSION_ID, {
+        secret: process.env.REFRESH_TOKEN_SECRET,
+      });
       if (!signedCookie) return next(new Error('Error signing cookie'));
-      const sessionDB = await sessionRepository.findOne({ id: signedCookie });
+      const sessionDB = await userRepository.findOne({
+        refreshToken: CHAT_APP_SESSION_ID,
+      });
       if (!sessionDB) return next(new Error('No session found'));
-      const userFromJson = JSON.parse(sessionDB.json);
-      if (!userFromJson.passport || !userFromJson.passport.user)
-        return next(new Error('Passport or User object does not exist.'));
-      const userDB = plainToInstance(
-        User,
-        JSON.parse(sessionDB.json).passport.user,
-      );
+
+      const userDB = plainToInstance(User, sessionDB);
       socket.user = userDB;
       next();
     });

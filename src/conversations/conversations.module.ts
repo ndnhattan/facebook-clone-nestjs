@@ -29,10 +29,4 @@ import { ConversationMiddleware } from './middlewares/conversation.middleware';
     },
   ],
 })
-export class ConversationsModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(isAuthorized, ConversationMiddleware)
-      .forRoutes('conversations/:id');
-  }
-}
+export class ConversationsModule {}

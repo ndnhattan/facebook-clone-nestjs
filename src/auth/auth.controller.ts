@@ -33,8 +33,17 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  login(@Body() userCredentials: ValidateUserDetails) {
-    return this.authService.login(userCredentials);
+  async login(
+    @Body() userCredentials: ValidateUserDetails,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.login(
+      userCredentials,
+    );
+
+    response.cookie('CHAT_APP_SESSION_ID', refreshToken);
+
+    return { accessToken, refreshToken };
   }
 
   @Get('status')

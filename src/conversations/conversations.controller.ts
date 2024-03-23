@@ -15,6 +15,7 @@ import { AuthUser } from '../utils/decorators';
 import { User } from '../utils/typeorm';
 import { IConversationsService } from './conversations';
 import { CreateConversationDto } from './dtos/CreateConversation.dto';
+import { ConversationsGuard } from './conversations.guard';
 
 @SkipThrottle()
 @Controller(Routes.CONVERSATIONS)
@@ -50,7 +51,9 @@ export class ConversationsController {
   }
 
   @Get(':id')
+  @UseGuards(ConversationsGuard)
   async getConversationById(@Param('id') id: number) {
+    console.log('asdfsdfds ', id);
     return this.conversationsService.findById(id);
   }
 }
