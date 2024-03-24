@@ -37,10 +37,12 @@ export class WebsocketAdapter extends IoAdapter {
       });
       if (!signedCookie) return next(new Error('Error signing cookie'));
       const sessionDB = await userRepository.findOne({
-        refreshToken: CHAT_APP_SESSION_ID,
+        where: {
+          refreshToken: CHAT_APP_SESSION_ID,
+        },
+        relations: ['peer'],
       });
       if (!sessionDB) return next(new Error('No session found'));
-
       const userDB = plainToInstance(User, sessionDB);
       socket.user = userDB;
       next();

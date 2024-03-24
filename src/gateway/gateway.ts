@@ -15,13 +15,7 @@ import { IFriendsService } from '../friends/friends';
 import { IGroupService } from '../groups/interfaces/group';
 import { Services, WebsocketEvents } from '../utils/constants';
 import { AuthenticatedSocket } from '../utils/interfaces';
-import {
-  Conversation,
-  Group,
-  GroupMessage,
-  Message,
-  User,
-} from '../utils/typeorm';
+import { Conversation, Group, GroupMessage, Message } from '../utils/typeorm';
 import {
   AddGroupUserResponse,
   CallAcceptedPayload,
