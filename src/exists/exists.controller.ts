@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IConversationsService } from '../conversations/conversations';
-import { ConversationNotFoundException } from '../conversations/exceptions/ConversationNotFound';
 import { IUserService } from '../users/interfaces/user';
 import { Routes, Services } from '../utils/constants';
 import { AuthUser } from '../utils/decorators';

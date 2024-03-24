@@ -1,4 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { SetMetadata } from '@nestjs/common';
 import { AuthenticatedRequest } from './types';
 
 export const AuthUser = createParamDecorator(
@@ -7,3 +8,5 @@ export const AuthUser = createParamDecorator(
     return request.user;
   },
 );
+
+export const Public = () => SetMetadata('isPublic', true);

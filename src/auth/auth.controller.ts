@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Req, Res } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { Request, Response } from 'express';
 import { IUserService } from '../users/interfaces/user';
@@ -15,8 +6,7 @@ import { Routes, Services } from '../utils/constants';
 import { AuthenticatedRequest, ValidateUserDetails } from '../utils/types';
 import { IAuthService } from './auth';
 import { CreateUserDto } from './dtos/CreateUser.dto';
-import { JwtAuthGuard } from './utils/Guards';
-import { Public } from './decorators/public.decorator';
+import { Public } from 'src/utils/decorators';
 
 @Controller(Routes.AUTH)
 export class AuthController {
